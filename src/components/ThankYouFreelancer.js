@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
 import {css} from "@emotion/react";
+import { Link } from "react-router-dom";
 
 const container = css`
     margin-top: 50px;
@@ -51,13 +52,37 @@ const ImageStyle = css`
     }
 `;
 
+const Button = styled("div")`
+    background: #364C63;
+    color: #fff;
+    text-transform: uppercase;
+    margin-top: 10px;
+    padding: 10px 50px;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.14), 0px 2px 1px rgba(0, 0, 0, 0.12), 0px 1px 3px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    @media (max-width: 551px){
+        font-size: 0.9rem;
+    }
+    @media (max-width: 370px){
+        font-size: 0.8rem;
+        padding: 10px 30px;
+    }
+`;
+
+const Links = css`text-decoration: none;color: unset`;
+
 function ThankYouFreelancer() {
   return (
-    <div css={[background, container]}>
-        <Header>Thank you for signing up</Header>
-        <Header>Please check your email for your credentials</Header>
-        <img css={ImageStyle} src={require("../assets/thankyou-message.png")} alt="Thank You" />
+    <div css={css`display: flex;flex-direction:column;align-items: center`}>
+        <div css={[background, container]}>
+            <Header>Thank you for signing up</Header>
+            <Header>Please check your email for your credentials</Header>
+            <img css={ImageStyle} src={require("../assets/thankyou-message.png")} alt="Thank You" />
+        </div>
+        <Link to="/" css={Links}><Button>Back to landing page</Button></Link>
     </div>
+    
   )
 }
 
