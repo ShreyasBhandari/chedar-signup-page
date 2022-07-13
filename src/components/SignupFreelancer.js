@@ -1,8 +1,10 @@
+/* eslint-disable default-case */
 /** @jsxImportSource @emotion/react */
 import { useState } from 'react'
+import {useForm} from 'react-hook-form';
 import styled from "@emotion/styled";
 import {css} from "@emotion/react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import CheckedIcon from "../assets/check.svg";
 
 const breakpoints = [614, 525, 340, 480];
@@ -167,7 +169,7 @@ const SubmitButton = styled("input")`
     height: 40px;
     border: none;
     border-radius: 4px;
-    background: #364C63;
+    background: ${props => props.valid? "#364C63":"#9EA0A5"};
     text-align: center;
     color: #fff;
     font-size: 0.9rem;
@@ -191,6 +193,14 @@ const ImagePreview = css`
     }
 `;
 
+const ErrorMessage = styled("p")`
+    color: #cc0c00;
+    font-size: 0.8rem;
+    margin-bottom: -15px;
+    margin-left: 5px;
+    margin-top: -10px;
+`;
+
 function SignupFreelancer() {
     const [firstNameFocused, setFirstNameFocused] = useState(false);
     const [lastNameFocused, setLastNameFocused] = useState(false);
@@ -203,11 +213,36 @@ function SignupFreelancer() {
     const [phoneLength, setPhoneLength] = useState(0);
     const [checked, setChecked] = useState(false);
 
-    function handlePhoneNumber(event){
-        if(/[a-zA-Z]/.test(event.target.value)){
-            event.target.value = event.target.value.slice(0, -1);
+    const {register, handleSubmit, formState:{errors}, clearErrors} = useForm();
+
+    function handleChange(event){
+        switch(event.target.name){
+            case "firstname":
+                setFirstNameLength(event.target.value.length);
+                clearErrors(event.target.name);
+                break;
+            case "lastname":
+                setLastNameLength(event.target.value.length);
+                clearErrors(event.target.name);
+                break;
+            case "email":
+                setEmailLength(event.target.value.length);
+                clearErrors(event.target.name);
+                break;
+            case "phonenumber":
+                if(/[a-zA-Z]/.test(event.target.value)){
+                    event.target.value = event.target.value.slice(0, -1);
+                }
+                setPhoneLength(event.target.value.length);
+                clearErrors(event.target.name);
+                break;
         }
-        setPhoneLength(event.target.value.length);
+    }
+
+    const navigate = useNavigate();
+    function onsubmit(data){
+        navigate("/thankyou-f");
+        console.log(data);
     }
         
     return (
@@ -223,39 +258,43 @@ function SignupFreelancer() {
         </FormHeader>
 
         <FormSection>
-            <Form action="">
+            <Form onSubmit={handleSubmit(onsubmit)}>
                 <FormTitle>
                     <FormTitleHeader>Sign up to Chedar</FormTitleHeader>
                     <FormTitleSubheader>You are signing up as a Freelancer</FormTitleSubheader>
                 </FormTitle>
 
                 <FormContent>
+                    {errors.firstname && <ErrorMessage>{errors.firstname.message}</ErrorMessage>}
                     <InputWrapper>
-                        <Input onChange={event => setFirstNameLength(event.target.value.length)} focused={firstNameFocused} onFocus={()=>setFirstNameFocused(true)} onBlur={()=>setFirstNameFocused(false)} placeholder="First Name" />
+                        <Input name="firstname" ref={register({required: {value: true, message: "Firstname is required."}})} onChange={handleChange} focused={firstNameFocused} onFocus={()=>setFirstNameFocused(true)} onBlur={()=>setFirstNameFocused(false)} placeholder="First Name" />
                         <Label inputLength={firstNameLength}>First Name</Label>
                     </InputWrapper>
 
+                    {errors.lastname && <ErrorMessage>{errors.lastname.message}</ErrorMessage>}
                     <InputWrapper>
-                        <Input onChange={event => setLastNameLength(event.target.value.length)} focused={lastNameFocused} onFocus={()=>setLastNameFocused(true)} onBlur={()=>setLastNameFocused(false)} placeholder="Last Name" />
+                        <Input name="lastname" ref={register({required: {value: true, message: "Lastname is required."}})} onChange={handleChange} focused={lastNameFocused} onFocus={()=>setLastNameFocused(true)} onBlur={()=>setLastNameFocused(false)} placeholder="Last Name" />
                         <Label inputLength={lastNameLength}>Last Name</Label>
                     </InputWrapper>
-
+                    
+                    {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
                     <InputWrapper>
-                        <Input onChange={event => setEmailLength(event.target.value.length)} focused={emailFocused} onFocus={()=>setEmailFocused(true)} onBlur={()=>setEmailFocused(false)} placeholder="Email Address" />
+                        <Input name="email" ref={register({required: {value: true, message: "Email is required."}})} onChange={handleChange} focused={emailFocused} onFocus={()=>setEmailFocused(true)} onBlur={()=>setEmailFocused(false)} placeholder="Email Address" />
                         <Label inputLength={emailLength}>Email Address</Label>
                     </InputWrapper>
-
+                    
+                    {errors.phonenumber && <ErrorMessage>{errors.phonenumber.message}</ErrorMessage>}
                     <InputWrapper>
-                        <Input onChange={handlePhoneNumber} focused={phoneFocused} onFocus={()=>setPhoneFocused(true)} onBlur={()=>setPhoneFocused(false)} placeholder="Phone Number" />
+                        <Input name="phonenumber" ref={register({required: {value: true, message: "Phone number is required."}})} onChange={handleChange} focused={phoneFocused} onFocus={()=>setPhoneFocused(true)} onBlur={()=>setPhoneFocused(false)} placeholder="Phone Number" />
                         <Label inputLength={phoneLength}>Phone Number</Label>
                     </InputWrapper>
 
                     <CheckboxWrapper>
+                        <input style={{display: "none"}} type="checkbox" name="terms_conditions" ref={register({required: true})} checked={checked} />
                         <Checkbox onClick={()=>setChecked(!checked)} checked={checked}><img css={css`width: 90%;padding-left: 1px;`} src={CheckedIcon} alt="Checked" /></Checkbox><CheckboxLabel onClick={()=>setChecked(!checked)}>I have read the <a css={css`color:#56575A;`} href="">Terms and Conditions.</a></CheckboxLabel>
                     </CheckboxWrapper>
 
-                    <Link to="/thankyou-f"><SubmitButton type="submit" value="Sign up now" /></Link>
-
+                    <SubmitButton type="submit" value="Sign up now" valid={checked}/>
 
                 </FormContent>
             </Form>
