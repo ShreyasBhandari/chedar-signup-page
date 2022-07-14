@@ -2,9 +2,9 @@ import "./App.css";
 import SignupCompAdmin from "./components/SignupCompAdmin";
 import SignupFreelancer from "./components/SignupFreelancer";
 import SignupPage from "./components/SignupPage";
-import ThankYouAdmin from "./components/ThankYouAdmin";
-import ThankYouFreelancer from "./components/ThankYouFreelancer";
+import ThankYouPage from "./components/ThankYouPage";
 import {BrowserRouter, Routes, Route } from "react-router-dom";
+
 
 function App() {
 	return (
@@ -14,8 +14,7 @@ function App() {
                     <Route path="/" element={<SignupPage />} />
                     <Route path="/freelance" element={<SignupFreelancer />}/>
                     <Route path="/company" element={<SignupCompAdmin />}/>
-                    <Route path="/thankyou-f" element={<ThankYouFreelancer />} />
-                    <Route path="/thankyou-a" element={<ThankYouAdmin />} />
+                    <Route path="/thankyou" element={<ThankYouPage />} />
                 </Routes>
             </BrowserRouter>
 		</div>
